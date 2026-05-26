@@ -58,6 +58,12 @@ chmod +x start.sh
 ./start.sh
 ```
 
+停止服务：
+
+```bash
+fuser -k 3000/tcp
+```
+
 ## 配置
 
 | 环境变量 | 必填 | 说明 |
