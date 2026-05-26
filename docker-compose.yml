@@ -1,0 +1,10 @@
+services:
+  person-summon:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-change-me-in-production}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
