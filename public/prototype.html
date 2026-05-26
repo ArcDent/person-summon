@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAIBOT人格生成器 — 新布局原型</title>
+<style>
+/* ===== Theme ===== */
+:root {
+  --bg: #ffffff; --card: #f9fafb; --card-hover: #f3f4f6;
+  --text: #1a1a1e; --text-secondary: #6b7280; --text-muted: #9ca3af;
+  --border: #e5e7eb; --border-hover: #d1d5db;
+  --amber: #d97706; --amber-dim: rgba(217,119,6,0.08);
+  --cyan: #0891b2; --cyan-dim: rgba(8,145,178,0.08);
+  --red: #dc2626; --red-dim: rgba(220,38,38,0.08);
+  --green: #16a34a; --input-bg: #ffffff;
+}
+[data-theme="dark"] {
+  --bg: #0a0a0f; --card: #16161e; --card-hover: #1c1c26;
+  --text: #e4e4ec; --text-secondary: #8888a0; --text-muted: #5a5a6e;
+  --border: rgba(255,255,255,0.06); --border-hover: rgba(255,255,255,0.12);
+  --amber: #f0a040; --amber-dim: rgba(240,160,64,0.15);
+  --cyan: #3dd6c8; --cyan-dim: rgba(61,214,200,0.15);
+  --red: #e0556a; --red-dim: rgba(224,85,106,0.15);
+  --green: #5ec97c; --input-bg: rgba(0,0,0,0.3);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;transition:background-color .3s ease,color .2s ease,border-color .3s ease,box-shadow .3s ease}
+html{font-size:18px;-webkit-font-smoothing:antialiased}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:256px 256px;opacity:0;
+}
+[data-theme="dark"] body::before{opacity:0.03}
+button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+pre,code{font-family:"JetBrains Mono","Cascadia Code","Fira Code",monospace}
+
+/* ===== Header ===== */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;border-bottom:1px solid var(--border);
+  background:var(--bg);position:sticky;top:0;z-index:50;
+}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-0.01em;color:var(--text)}
+.header-actions{display:flex;align-items:center;gap:10px}
+.lang-switcher{display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.lang-btn{padding:3px 8px;font-size:.7rem;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border)}
+.lang-btn:last-child{border-right:none}
+.lang-btn.active{background:var(--amber);color:#fff}
+[data-theme="dark"] .lang-btn.active{color:#0a0a0f}
+.history-btn{padding:6px 10px;border:1px solid var(--border);border-radius:4px;color:var(--text-secondary);font-size:.75rem}
+.history-btn:hover{border-color:var(--border-hover);color:var(--text)}
+.theme-btn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);color:var(--text-secondary);font-size:.95rem}
+.theme-btn:hover{border-color:var(--border-hover);color:var(--text)}
+
+/* ===== Two-Column Layout ===== */
+.main-layout{display:flex;height:calc(100vh - 62px);overflow:hidden;padding:16px 20px;gap:16px}
+.col-left{width:42%;overflow-y:auto;padding-right:8px}
+.col-right{width:58%;overflow-y:auto;padding:20px 24px 40px 20px}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px;min-height:45vh;display:flex;flex-direction:column}
+[data-theme="dark"] .result-card{background:rgba(255,255,255,0.015)}
+.result-card .tabs-header{border-bottom:1px solid var(--border);margin-bottom:14px}
+.result-card .tab-btn{padding:8px 14px;font-size:.78rem;font-weight:500;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.result-card .tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.results-outer{margin-top:16px;animation:fadeIn .3s ease}
+
+/* ===== Section Labels ===== */
+.section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:6px}
+.section-hint{font-size:.78rem;color:var(--text-muted);margin-bottom:14px;line-height:1.6}
+
+/* ===== Form ===== */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:12px 16px;margin-bottom:12px}
+.form-card .form-label{display:block;font-size:.78rem;font-weight:600;color:var(--text-secondary);margin-bottom:3px}
+.form-card .form-hint{font-size:.72rem;color:var(--text-muted);margin-bottom:8px;line-height:1.5}
+.form-group{margin-bottom:0}
+.form-label{display:block;font-size:.78rem;font-weight:600;color:var(--text-secondary);margin-bottom:3px}
+.form-hint{font-size:.72rem;color:var(--text-muted);margin-bottom:6px;line-height:1.5}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:9px 12px;background:var(--input-bg);border:1px solid var(--border);
+  border-radius:4px;color:var(--text);font-size:.85rem;outline:none
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--amber);box-shadow:0 0 0 2px var(--amber-dim)}
+.form-textarea{resize:vertical;min-height:60px}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.char-counter{text-align:right;font-size:.68rem;color:var(--text-muted);margin-top:3px}
+.form-row{display:flex;gap:12px}.form-row>*{flex:1}
+
+/* ===== Model Selector Row ===== */
+.model-row{display:flex;align-items:stretch;gap:8px;margin-bottom:4px}
+.model-row .btn-row{display:flex;gap:6px}
+.model-row .btn-generate{
+  padding:9px 22px;background:var(--amber);color:#fff;border:none;border-radius:4px;
+  font-size:.85rem;font-weight:700;white-space:nowrap;
+  display:flex;align-items:center;gap:6px
+}
+[data-theme="dark"] .model-row .btn-generate{color:#0a0a0f}
+.model-row .btn-generate:hover:not(:disabled){filter:brightness(1.1)}
+.model-row .btn-generate:disabled{opacity:.4;cursor:not-allowed}
+.gear-btn{padding:9px 9px;border:1px solid var(--border);border-radius:4px;color:var(--text-muted);font-size:.9rem}.gear-btn:hover{border-color:var(--border-hover);color:var(--text)}
+
+/* ===== Temp/Token Row ===== */
+.temp-token-row{display:flex;gap:12px;align-items:flex-end}.temp-token-row .half{flex:1}
+
+/* ===== Advanced Settings ===== */
+.advanced{margin-top:20px}
+.advanced-header{
+  display:flex;align-items:center;gap:6px;padding:10px 14px;
+  background:var(--card);border:1px solid var(--border);border-radius:4px;
+  cursor:pointer;user-select:none;font-size:.78rem;font-weight:600;color:var(--text-secondary)
+}
+.advanced-header:hover{border-color:var(--border-hover)}
+.advanced-body{padding:16px;border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px;display:none}
+.advanced-body.open{display:block}
+
+/* ===== Result Area ===== */
+.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.result-header h2{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.result-actions{display:flex;gap:6px}
+.result-actions .btn-sm{
+  padding:5px 12px;font-size:.72rem;font-weight:600;border-radius:4px;
+  border:1px solid var(--border);color:var(--text-secondary);background:var(--bg)
+}
+.result-actions .btn-sm:hover{border-color:var(--border-hover);color:var(--text)}
+[data-theme="dark"] .result-actions .btn-sm{background:var(--card)}
+
+/* ===== Empty State ===== */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:220px;text-align:center;padding:30px 20px
+}
+.empty-state .empty-icon{font-size:2rem;margin-bottom:10px;opacity:.5}
+.empty-state .empty-title{font-size:.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
+.empty-state .empty-desc{font-size:.72rem;color:var(--text-muted);max-width:280px;line-height:1.6}
+
+/* ===== Config Block Cards (real results) ===== */
+.config-block{
+  background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  padding:16px 18px;margin-bottom:10px;position:relative;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  transition:box-shadow .2s,border-color .2s
+}
+.config-block:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08);border-color:var(--border-hover)}
+[data-theme="dark"] .config-block{background:var(--card)}
+[data-theme="dark"] .config-block:hover{box-shadow:0 2px 12px rgba(0,0,0,0.3)}
+.config-block.amber{border-left:3px solid var(--amber)}
+.config-block.cyan{border-left:3px solid var(--cyan)}
+.config-block .block-title{font-weight:700;font-size:.82rem;margin-bottom:1px}
+.config-block .block-id{font-size:.7rem;color:var(--text-muted);font-family:"JetBrains Mono",monospace;margin-bottom:8px}
+.config-block pre{
+  background:var(--input-bg);border-radius:4px;padding:10px 12px;
+  font-size:.78rem;line-height:1.6;overflow-x:auto;color:var(--text-secondary);
+  white-space:pre-wrap;word-break:break-word
+}
+.config-block .copy-btn{
+  position:absolute;top:12px;right:12px;font-size:.72rem;padding:4px 10px;
+  border-radius:3px;border:1px solid var(--border);background:var(--bg);
+  color:var(--text-secondary)
+}
+.config-block .copy-btn:hover{border-color:var(--border-hover);color:var(--text)}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ===== Tabs ===== */
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>MAIBOT人格生成器</h1>
+  <div class="header-actions">
+    <div class="lang-switcher">
+      <button class="lang-btn active">中</button>
+      <button class="lang-btn">EN</button>
+      <button class="lang-btn">日</button>
+    </div>
+    <button class="history-btn">☰ 历史记录</button>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换主题" id="themeBtn">☀</button>
+  </div>
+</header>
+
+<div class="main-layout">
+
+  <!-- ===== LEFT COLUMN: Input ===== -->
+  <div class="col-left">
+
+    <div class="section-label">生成输入</div>
+    <div class="section-hint">选择已配置的模型，把任意文段、角色卡或人设解析成 MAIBOT 配置格式。</div>
+
+    <!-- Model + Generate Card -->
+    <div class="form-card">
+      <label class="form-label">生成模型</label>
+      <div class="model-row">
+        <select class="form-select" style="flex:1">
+          <option>DeepSeek / deepseek-v4-pro</option>
+          <option>OpenAI / gpt-4o</option>
+          <option>Anthropic / claude-sonnet-4-6</option>
+        </select>
+        <div class="btn-row">
+          <button class="gear-btn" title="管理模型">&#9881;</button>
+          <button class="btn-generate">&#9679; 生成</button>
+        </div>
+      </div>
+      <div class="form-hint">来自模型管理中定义的 models。</div>
+    </div>
+
+    <!-- Source Text Card -->
+    <div class="form-card">
+      <label class="form-label">原始文段或人设</label>
+      <textarea class="form-textarea" placeholder="可以粘贴角色卡、几句人设、说话风格描述、群聊要求，模型会拆成 personality / reply_style / chat prompt。" style="min-height:150px"></textarea>
+      <div class="char-counter">0 / 20000</div>
+    </div>
+
+    <!-- Scene + Language Card -->
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">目标场景</label>
+          <select class="form-select">
+            <option>群聊</option>
+            <option>私聊</option>
+            <option>群聊和私聊</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">生成语言</label>
+          <input class="form-input" value="简体中文">
+        </div>
+      </div>
+    </div>
+
+    <!-- Extra Requirements Card -->
+    <div class="form-card">
+      <label class="form-label">额外要求</label>
+      <textarea class="form-textarea" placeholder="例如：更短、更日常；不要攻击性；保留技术群助教气质；不要改成角色卡口吻。" style="min-height:60px"></textarea>
+      <div class="char-counter">0 / 4000</div>
+    </div>
+
+    <!-- Temp + Token Card -->
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">温度</label>
+          <input class="form-input" value="0.3" style="text-align:center">
+        </div>
+        <div class="form-group">
+          <label class="form-label">最大输出 Token</label>
+          <input class="form-input" value="1800" style="text-align:center">
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Settings Card -->
+    <div class="form-card">
+      <div class="advanced-header" onclick="toggleAdvanced()" style="margin:-12px -16px 0;border:none;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0">
+        <span id="advArrow">&#9660;</span> 高级设置
+      </div>
+      <div class="advanced-body open" id="advBody" style="margin:12px -16px -12px;border:none;border-top:1px solid var(--border)">
+        <div style="padding:0 16px">
+          <div style="display:flex;gap:6px;margin-bottom:10px;padding-top:8px">
+            <button class="lang-btn active" style="border:1px solid var(--border);border-radius:12px;font-size:.68rem">zh</button>
+            <button class="lang-btn" style="border:1px solid var(--border);border-radius:12px;font-size:.68rem">en</button>
+            <button class="lang-btn" style="border:1px solid var(--border);border-radius:12px;font-size:.68rem">ja</button>
+          </div>
+          <textarea style="width:100%;min-height:160px;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:.75rem;padding:10px;font-family:'JetBrains Mono',monospace;resize:vertical">你是 MaiBot/MaiM 的配置人设解析助手...</textarea>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+            <button style="padding:6px 16px;border:1px solid var(--border);border-radius:4px;font-size:.75rem;color:var(--text-secondary)">恢复默认</button>
+            <button style="padding:6px 16px;background:var(--amber);color:#fff;border:none;border-radius:4px;font-size:.75rem;font-weight:600">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== RIGHT COLUMN: Results ===== -->
+  <div class="col-right">
+
+    <!-- Result Card (short, ~half page) -->
+    <div class="result-card">
+
+      <div class="result-header">
+        <div>
+          <h2>生成结果</h2>
+          <div class="form-hint" style="margin-bottom:0">生成结果会拆成配置块，注入时只覆盖对应字段，不影响其它配置。</div>
+        </div>
+        <div class="result-actions">
+          <button class="btn-sm">全部复制</button>
+          <button class="btn-sm">&#10515; 下载 TOML</button>
+        </div>
+      </div>
+
+      <div class="tabs-header">
+        <button class="tab-btn active">配置块</button>
+        <button class="tab-btn">完整 TOML</button>
+        <button class="tab-btn">原始输出</button>
+      </div>
+
+      <div class="empty-state" id="emptyState" style="flex:1">
+        <div class="empty-icon">&#128220;</div>
+        <div class="empty-title">等待生成</div>
+        <div class="empty-desc">选择模型并输入人设后，结果会按 bot_config.toml 字段拆成可注入的配置块。</div>
+      </div>
+
+      <div style="text-align:center;margin-top:12px">
+        <button onclick="toggleDemo()" style="padding:6px 18px;border:1px solid var(--border);border-radius:4px;font-size:.75rem;color:var(--text-secondary);background:var(--bg)">切换生成结果预览</button>
+      </div>
+    </div>
+
+    <!-- Config blocks appear BELOW the result card -->
+    <div class="results-outer" id="resultsDemo" style="display:none">
+      <div class="config-block amber">
+        <div class="block-title">人格设定</div>
+        <div class="block-id">personality.personality</div>
+        <pre>personality = "你是一个大二女大学生，性格包容善良，常上网聊天..."</pre>
+        <button class="copy-btn">复制</button>
+      </div>
+      <div class="config-block amber">
+        <div class="block-title">表达风格</div>
+        <div class="block-id">personality.reply_style</div>
+        <pre>reply_style = "回复平淡简短，类似贴吧、知乎的随意风格..."</pre>
+        <button class="copy-btn">复制</button>
+      </div>
+      <div class="config-block amber">
+        <div class="block-title">备用表达风格</div>
+        <div class="block-id">personality.multiple_reply_style</div>
+        <pre>multiple_reply_style = [
+  "如果有人对你有敌意，尝试讽刺并且之后不会理他了",
+  "用1-2个字进行回复",
+  "用1-2个符号进行回复",
+]</pre>
+        <button class="copy-btn">复制</button>
+      </div>
+      <div class="config-block cyan">
+        <div class="block-title">群聊提示词</div>
+        <div class="block-id">chat.group_chat_prompt</div>
+        <pre>group_chat_prompt = "你正在QQ群里聊天，可以插话、接梗..."</pre>
+        <button class="copy-btn">复制</button>
+      </div>
+      <div class="config-block cyan">
+        <div class="block-title">私聊提示词</div>
+        <div class="block-id">chat.private_chat_prompts</div>
+        <pre>private_chat_prompts = "你正在私聊，可以稍多闲聊..."</pre>
+        <button class="copy-btn">复制</button>
+      </div>
+      <div class="config-block cyan">
+        <div class="block-title">额外聊天流 Prompt</div>
+        <div class="block-id">chat.chat_prompts</div>
+        <pre>chat_prompts = []</pre>
+        <button class="copy-btn">复制</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleTheme(){
+  const html=document.documentElement;
+  const btn=document.getElementById('themeBtn');
+  if(html.getAttribute('data-theme')==='dark'){
+    html.removeAttribute('data-theme');btn.textContent='☀';
+  }else{
+    html.setAttribute('data-theme','dark');btn.textContent='☾';
+  }
+}
+function toggleAdvanced(){
+  const body=document.getElementById('advBody');
+  const arrow=document.getElementById('advArrow');
+  body.classList.toggle('open');
+  arrow.textContent=body.classList.contains('open')?'▲':'▼';
+}
+function toggleDemo(){
+  const results=document.getElementById('resultsDemo');
+  if(results.style.display==='none'){
+    results.style.display='block';
+  }else{
+    results.style.display='none';
+  }
+}
+</script>
+
+</body>
+</html>

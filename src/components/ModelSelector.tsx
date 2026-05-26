@@ -57,50 +57,31 @@ export default function ModelSelector({ onChange }: ModelSelectorProps) {
   };
 
   return (
-    <>
-      <div className="card">
-        <div className="form-label">{t.modelConfig}</div>
-        <div className="model-selector-row">
-          <div className="model-select-group">
-            <select
-              className="form-select cyan-focus"
-              value={selectedProviderId}
-              onChange={(e) => handleProviderChange(e.target.value)}
-            >
-              <option value="">-- {t.provider} --</option>
-              {providers.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="model-select-group">
-            <select
-              className="form-select cyan-focus"
-              value={selectedModelId}
-              onChange={(e) => handleModelChange(e.target.value)}
-              disabled={!selectedProviderId}
-            >
-              <option value="">-- {t.model} --</option>
-              {(currentProvider?.models || []).map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.displayName}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button
-            className="gear-btn"
-            onClick={() => setManagerOpen(true)}
-            title={t.addProvider}
-            aria-label={t.addProvider}
-          >
-            &#9881;
-          </button>
-        </div>
-      </div>
+    <div style={{ display: "flex", gap: 8 }}>
+      <select
+        className="form-select"
+        value={selectedProviderId}
+        onChange={(e) => handleProviderChange(e.target.value)}
+        style={{ flex: 1 }}
+      >
+        <option value="">-- {t.provider} --</option>
+        {providers.map((p) => (
+          <option key={p.id} value={p.id}>{p.name}</option>
+        ))}
+      </select>
+      <select
+        className="form-select"
+        value={selectedModelId}
+        onChange={(e) => handleModelChange(e.target.value)}
+        disabled={!selectedProviderId}
+        style={{ flex: 1 }}
+      >
+        <option value="">-- {t.model} --</option>
+        {(currentProvider?.models || []).map((m) => (
+          <option key={m.id} value={m.id}>{m.displayName}</option>
+        ))}
+      </select>
       <ProviderManager isOpen={managerOpen} onClose={() => setManagerOpen(false)} />
-    </>
+    </div>
   );
 }

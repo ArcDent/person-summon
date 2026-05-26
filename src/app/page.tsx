@@ -1,31 +1,47 @@
 "use client";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
-import type { GenerateRequest, GenerateResponse, HistoryItem, ConfigBlock } from "@/types";
+import type { GenerateRequest, GenerateResponse, HistoryItem } from "@/types";
 import GeneratorForm from "@/components/GeneratorForm";
 import ResultTabs from "@/components/ResultTabs";
 import PromptEditor from "@/components/PromptEditor";
 import HistoryPanel from "@/components/HistoryPanel";
 
+type LayoutMode = "dual" | "single";
+
 export default function HomePage() {
   const { t, locale, setLocale, theme, toggleTheme } = useI18n();
 
+  const [layout, setLayout] = useState<LayoutMode>("dual");
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [streamingText, setStreamingText] = useState("");
   const [loading, setLoading] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("blocks");
   const lastFormData = useRef<GenerateRequest | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("layout") as LayoutMode;
+    if (saved === "single") setLayout("single");
+  }, []);
+
+  const toggleLayout = () => {
+    setLayout((prev) => {
+      const next: LayoutMode = prev === "dual" ? "single" : "dual";
+      localStorage.setItem("layout", next);
+      return next;
+    });
+  };
 
   const handleRetry = useCallback(() => {
     setResult(null);
     setError(null);
     setErrorCode(null);
     setStreamingText("");
-    if (lastFormData.current) {
-      handleGenerate(lastFormData.current);
-    }
+    setActiveTab("blocks");
+    if (lastFormData.current) handleGenerate(lastFormData.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -36,6 +52,7 @@ export default function HomePage() {
     setErrorCode(null);
     setStreamingText("");
     setResult(null);
+    setActiveTab("blocks");
 
     try {
       const response = await fetch("/api/generate", {
@@ -55,7 +72,6 @@ export default function HomePage() {
       const contentType = response.headers.get("content-type") || "";
 
       if (contentType.includes("text/event-stream")) {
-        // SSE stream
         const reader = response.body!.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
@@ -76,7 +92,6 @@ export default function HomePage() {
               const raw = line.slice(6);
               try {
                 const json = JSON.parse(raw);
-
                 if (currentEvent === "token") {
                   const token = typeof json?.text === "string" ? json.text : "";
                   setStreamingText((prev) => prev + token);
@@ -90,19 +105,14 @@ export default function HomePage() {
                   setLoading(false);
                 }
               } catch {
-                // skip unparseable data
+                // skip
               }
               currentEvent = "";
             }
           }
         }
-
-        // If we exited the loop without done/error event, close loading
-        if (loading) {
-          setLoading(false);
-        }
+        if (loading) setLoading(false);
       } else {
-        // Non-streaming response
         const json = await response.json();
         if (json.success && json.data) {
           setResult(json.data as GenerateResponse);
@@ -124,11 +134,14 @@ export default function HomePage() {
     setError(null);
     setErrorCode(null);
     setStreamingText("");
+    setActiveTab("blocks");
     setHistoryOpen(false);
   }, []);
 
+  const hasContent = !!(result || error || loading);
+
   return (
-    <div className="app-container">
+    <div className={`app-container ${layout === "dual" ? "layout-dual" : "layout-single"}`}>
       {/* Header */}
       <header className="app-header">
         <h1>MAIBOT人格生成器</h1>
@@ -147,36 +160,99 @@ export default function HomePage() {
           <button className="history-btn" onClick={() => setHistoryOpen(true)}>
             &#9776; {t.history}
           </button>
-          <button
-            className="theme-toggle-btn"
-            onClick={toggleTheme}
-            title={theme === "light" ? "切换暗色模式" : "切换亮色模式"}
-          >
+          <button className="layout-toggle-btn" onClick={toggleLayout} title={layout === "dual" ? t.layoutDual : t.layoutSingle}>
+            {layout === "dual" ? "⊟" : "⊞"}
+          </button>
+          <button className="theme-toggle-btn" onClick={toggleTheme} title={theme === "light" ? "切换暗色模式" : "切换亮色模式"}>
             {theme === "light" ? "☀" : "☾"}
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main>
-        <GeneratorForm onGenerate={handleGenerate} disabled={loading} />
+      {/* Main Layout */}
+      <div className="main-layout">
+        {/* Left Column: Input */}
+        <div className="col-left">
+          <div className="section-label">{t.sectionInput}</div>
+          <div className="section-hint">{t.inputDesc}</div>
 
-        <div className="mt-3">
+          <GeneratorForm onGenerate={handleGenerate} disabled={loading} />
+
           <PromptEditor />
         </div>
 
-        {(result || error || loading) && (
-          <div className="card">
-            <ResultTabs
-              result={result}
-              error={error}
-              errorCode={errorCode}
-              streamingText={streamingText}
-              onRetry={handleRetry}
-            />
+        {/* Right Column: Results */}
+        <div className="col-right">
+          <div className="result-card">
+            <div className="result-header">
+              <div>
+                <h2>生成结果</h2>
+                <div className="form-hint" style={{ marginBottom: 0 }}>{t.resultDesc}</div>
+              </div>
+              {hasContent && (
+                <div className="result-actions">
+                  <button className="btn-sm" onClick={() => navigator.clipboard.writeText(result?.toml || "")}>
+                    {t.copyAll}
+                  </button>
+                  {result && (
+                    <a className="btn-sm" href={`/api/export/toml?historyId=${result.id}`} download style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                      &#10515; {t.exportToml}
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="tabs-header">
+              {(["blocks", "toml", "raw"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  className={`tab-btn ${activeTab === tab ? "active" : ""}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab === "blocks" ? t.configBlocks : tab === "toml" ? t.fullToml : t.rawOutput}
+                </button>
+              ))}
+            </div>
+
+            <div className="tab-content">
+              {!hasContent && !loading ? (
+                <div className="empty-state">
+                  <div className="empty-icon">&#128220;</div>
+                  <div className="empty-title">{t.waitingTitle}</div>
+                  <div className="empty-desc">{t.waitingDesc}</div>
+                </div>
+              ) : (
+                <ResultTabs
+                  result={result}
+                  error={error}
+                  errorCode={errorCode}
+                  streamingText={streamingText}
+                  onRetry={handleRetry}
+                  activeTab={activeTab}
+                  showBlocks={layout === "single"}
+                />
+              )}
+            </div>
           </div>
-        )}
-      </main>
+
+          {/* Config blocks OUTSIDE the card in dual mode */}
+          {hasContent && layout === "dual" && activeTab === "blocks" && (
+            <div className="results-outer">
+              <ResultTabs
+                result={result}
+                error={error}
+                errorCode={errorCode}
+                streamingText={streamingText}
+                onRetry={handleRetry}
+                activeTab="blocks"
+                showBlocks={true}
+                outerOnly={true}
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* History Panel */}
       <HistoryPanel

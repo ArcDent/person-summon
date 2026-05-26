@@ -10,21 +10,14 @@ interface ResultTabsProps {
   errorCode: string | null;
   streamingText: string;
   onRetry: () => void;
+  activeTab: string;
+  showBlocks: boolean;
+  outerOnly?: boolean;
 }
 
-type TabKey = "blocks" | "toml" | "raw";
-
-export default function ResultTabs({ result, error, errorCode, streamingText, onRetry }: ResultTabsProps) {
+export default function ResultTabs({ result, error, errorCode, streamingText, onRetry, activeTab, showBlocks, outerOnly }: ResultTabsProps) {
   const { t } = useI18n();
-  const [activeTab, setActiveTab] = useState<TabKey>("blocks");
   const [copiedToml, setCopiedToml] = useState(false);
-  const [copiedAll, setCopiedAll] = useState(false);
-
-  const tabs: { key: TabKey; label: string }[] = [
-    { key: "blocks", label: t.configBlocks },
-    { key: "toml", label: t.fullToml },
-    { key: "raw", label: t.rawOutput },
-  ];
 
   const handleCopyToml = useCallback(async (text: string) => {
     try {
@@ -33,34 +26,26 @@ export default function ResultTabs({ result, error, errorCode, streamingText, on
       setTimeout(() => setCopiedToml(false), 2000);
     } catch {
       const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
+      ta.value = text; document.body.appendChild(ta);
+      ta.select(); document.execCommand("copy");
       document.body.removeChild(ta);
       setCopiedToml(true);
       setTimeout(() => setCopiedToml(false), 2000);
     }
   }, []);
 
-  const handleCopyAll = useCallback(async () => {
-    if (!result) return;
-    const allText = result.blocks.map((b) => b.toml).join("\n\n");
-    try {
-      await navigator.clipboard.writeText(allText);
-      setCopiedAll(true);
-      setTimeout(() => setCopiedAll(false), 2000);
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = allText;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      setCopiedAll(true);
-      setTimeout(() => setCopiedAll(false), 2000);
-    }
-  }, [result]);
+  // Outer-only mode: just render config blocks
+  if (outerOnly) {
+    if (!result) return null;
+    return (
+      <div>
+        <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginBottom: 14 }}>{t.configNote}</p>
+        {result.blocks.map((block) => (
+          <ConfigBlockCard key={block.id} block={block} />
+        ))}
+      </div>
+    );
+  }
 
   // Error state
   if (error && !result) {
@@ -69,9 +54,7 @@ export default function ResultTabs({ result, error, errorCode, streamingText, on
         <div className="error-title">Error</div>
         {errorCode && <div className="error-code">Code: {errorCode}</div>}
         <div className="error-message">{error}</div>
-        <button className="btn btn-secondary btn-sm" onClick={onRetry}>
-          {t.retry}
-        </button>
+        <button className="btn btn-secondary btn-sm" onClick={onRetry}>{t.retry}</button>
       </div>
     );
   }
@@ -85,81 +68,47 @@ export default function ResultTabs({ result, error, errorCode, streamingText, on
     );
   }
 
-  // No result yet
+  // No result
   if (!result) return null;
 
+  // Tab content
   return (
-    <div>
-      <div className="tabs-header">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            className={`tab-btn ${activeTab === tab.key ? "active" : ""}`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
+    <div style={{ flex: 1 }}>
+      {activeTab === "blocks" && showBlocks && (
+        <div>
+          <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginBottom: 14 }}>{t.configNote}</p>
+          {result.blocks.map((block) => (
+            <ConfigBlockCard key={block.id} block={block} />
+          ))}
+        </div>
+      )}
+
+      {activeTab === "blocks" && !showBlocks && (
+        <div className="empty-state" style={{ minHeight: "auto", padding: "10px 0" }}>
+          <div className="empty-desc" style={{ color: "var(--text-muted)" }}>
+            {t.configNote}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "toml" && (
+        <div className="toml-pre">
+          <button className={`copy-btn-toml ${copiedToml ? "copied" : ""}`} onClick={() => handleCopyToml(result.toml)}>
+            {copiedToml ? t.copied : t.copy}
           </button>
-        ))}
-      </div>
+          <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{result.toml}</pre>
+        </div>
+      )}
 
-      <div className="tab-content" key={activeTab}>
-        {activeTab === "blocks" && (
-          <div>
-            <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginBottom: 16 }}>
-              {t.configNote}
-            </p>
-            {result.blocks.map((block) => (
-              <ConfigBlockCard key={block.id} block={block} />
-            ))}
-          </div>
-        )}
-
-        {activeTab === "toml" && (
-          <div className="toml-pre">
-            <button
-              className={`copy-btn-toml ${copiedToml ? "copied" : ""}`}
-              onClick={() => handleCopyToml(result.toml)}
-            >
-              {copiedToml ? t.copied : t.copy}
-            </button>
-            <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{result.toml}</pre>
-          </div>
-        )}
-
-        {activeTab === "raw" && (
-          <div className="card">
-            <pre style={{
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-              fontSize: "0.8rem",
-              lineHeight: 1.7,
-              color: "var(--text-secondary)",
-              fontFamily: "var(--font-mono)",
-            }}>
-              {result.rawResponse}
-            </pre>
-          </div>
-        )}
-      </div>
-
-      <div className="result-bottom-bar">
-        <button className="btn btn-secondary btn-sm" onClick={handleCopyAll}>
-          {copiedAll ? t.copied : t.copyAll}
-        </button>
-        <a
-          className="btn btn-secondary btn-sm"
-          href={`/api/export/toml?historyId=${result.id}`}
-          download
-          style={{ textDecoration: "none" }}
-        >
-          {t.exportToml}
-        </a>
-        {error && result && (
-          <span style={{ fontSize: "0.78rem", color: "var(--red)", marginLeft: "auto" }}>
-            {error}
-          </span>
-        )}
-      </div>
+      {activeTab === "raw" && (
+        <pre style={{
+          whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: "0.8rem",
+          lineHeight: 1.7, color: "var(--text-secondary)", fontFamily: "var(--font-mono)",
+          padding: "14px 0",
+        }}>
+          {result.rawResponse}
+        </pre>
+      )}
     </div>
   );
 }

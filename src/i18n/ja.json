@@ -41,5 +41,15 @@
   "noResults": "生成履歴はありません",
   "noteEnJa": "英語と日本語のプロンプトテンプレートは機械翻訳です。手動での確認をお勧めします。",
   "deleteConfirm": "削除してもよろしいですか？",
-  "configNote": "以下の設定ブロックは、maimaibotのbot_config.tomlに直接コピーして使用できます。"
+  "configNote": "以下の設定ブロックは、maimaibotのbot_config.tomlに直接コピーして使用できます。",
+  "sectionInput": "生成入力",
+  "inputDesc": "設定済みのモデルを選択し、任意のテキストやキャラクターカードを貼り付けてMAIBOT設定形式に解析します。",
+  "modelHint": "モデル管理で定義されたmodels。",
+  "sourceTextPlaceholder": "キャラクターカード、人設メモ、話し方の説明、グループチャットの要件などを貼り付けられます。モデルがpersonality / reply_style / chat promptに分解します。",
+  "extraRequirementsPlaceholder": "例：より短く、より日常的に、攻撃性なし、技術グループのアシスタント気質を保持、キャラクターカード口調にしない。",
+  "resultDesc": "生成結果は設定ブロックに分割されます。注入時は対応するフィールドのみ上書きされ、他の設定には影響しません。",
+  "waitingTitle": "生成待ち",
+  "waitingDesc": "モデルを選択して人設を入力すると、結果がbot_config.tomlのフィールドに基づいて設定ブロックに分割されます。",
+  "layoutDual": "シングルカラムに切替",
+  "layoutSingle": "デュアルカラムに切替"
 }

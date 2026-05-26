@@ -41,5 +41,15 @@
   "noResults": "No generation history",
   "noteEnJa": "English and Japanese prompt templates are machine-translated. Manual verification recommended.",
   "deleteConfirm": "Confirm deletion?",
-  "configNote": "The following config blocks can be copied directly into your maimaibot bot_config.toml."
+  "configNote": "The following config blocks can be copied directly into your maimaibot bot_config.toml.",
+  "sectionInput": "Generate Input",
+  "inputDesc": "Select a configured model and paste any text, character card, or personality description to parse it into MAIBOT config format.",
+  "modelHint": "Models defined in model management.",
+  "sourceTextPlaceholder": "Paste a character card, personality notes, speaking style description, or group chat requirements. The model will split it into personality / reply_style / chat prompt.",
+  "extraRequirementsPlaceholder": "e.g. Shorter and more casual; no aggression; maintain teaching assistant tone; don't write in character card style.",
+  "resultDesc": "Results are split into config blocks. Injecting only overwrites the corresponding field without affecting other settings.",
+  "waitingTitle": "Waiting for generation",
+  "waitingDesc": "Select a model and enter a persona description. Results will be split into config blocks based on bot_config.toml fields.",
+  "layoutDual": "Switch to single column",
+  "layoutSingle": "Switch to dual column"
 }
