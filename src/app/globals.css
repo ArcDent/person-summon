@@ -77,8 +77,8 @@ body {
   line-height: 1.6;
   min-height: 100vh;
 }
-html:has(.app-container.layout-dual),
-html:has(.app-container.layout-dual) body { height: 100vh; overflow: hidden; }
+html.layout-dual,
+html.layout-dual body { height: 100vh; overflow: hidden; }
 
 /* Subtle noise texture (dark mode only via opacity) */
 body::before {
@@ -118,7 +118,7 @@ a:hover { text-decoration: underline; }
 .app-header h1 {
   font-family: var(--font-heading); font-size: 1.6rem;
   font-weight: 700; letter-spacing: -0.02em; color: var(--text);
-  line-height: 1;
+  line-height: 32px; height: 32px; display: flex; align-items: center;
 }
 .header-actions { display: flex; align-items: center; gap: 8px; }
 
@@ -511,23 +511,46 @@ a:hover { text-decoration: underline; }
   margin-bottom: 0; background: var(--bg);
   flex-shrink: 0;
 }
-.app-container.layout-dual .app-header h1 { font-size: 1.35rem; line-height: 1; }
+.app-container.layout-dual .app-header h1 { font-size: 1.35rem; line-height: 32px; height: 32px; display: flex; align-items: center; }
 .app-container.layout-dual { max-width: none; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
 .app-container.layout-single { max-width: 780px; margin: 0 auto; padding: 40px 20px 80px; }
 
 .main-layout { display: none; }
 .app-container.layout-single .main-layout { display: block; height: auto; overflow: visible; padding: 0; gap: 0; }
-.app-container.layout-dual .main-layout { display: flex; flex: 1; overflow: hidden; padding: 16px 20px; gap: 16px; animation: fadeIn 0.5s ease-out; }
-.app-container.layout-single .main-layout { animation: fadeIn 0.5s ease-out; }
-.col-left, .col-right { transition: width 0.5s ease-out, padding 0.5s ease-out; }
+.app-container.layout-dual .main-layout { display: flex; flex: 1; overflow: hidden; padding: 16px 20px; gap: 16px; }
+.col-left, .col-right { transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1), padding 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
 .app-container.layout-dual,
-.app-container.layout-single { transition: max-width 0.5s ease-out, margin 0.5s ease-out, padding 0.5s ease-out; }
+.app-container.layout-single { transition: max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1), margin 0.45s cubic-bezier(0.4, 0, 0.2, 1), padding 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
+.app-container.layout-dual .main-layout > *,
+.app-container.layout-single .main-layout > * { animation: fadeSlideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Results block slide-up */
+.results-outer { margin-top: 16px; }
+.results-outer .config-block-card {
+  animation: resultSlideUp 0.4s ease-out both;
+}
+.results-outer .config-block-card:nth-child(1) { animation-delay: 0.05s; }
+.results-outer .config-block-card:nth-child(2) { animation-delay: 0.1s; }
+.results-outer .config-block-card:nth-child(3) { animation-delay: 0.15s; }
+.results-outer .config-block-card:nth-child(4) { animation-delay: 0.2s; }
+.results-outer .config-block-card:nth-child(5) { animation-delay: 0.25s; }
+.results-outer .config-block-card:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes resultSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .app-container.layout-single .main-layout .col-left,
 .app-container.layout-single .main-layout .col-right { width: 100%; overflow: visible; padding: 0; }
 .app-container.layout-single .main-layout .col-left { margin-bottom: 32px; }
 
-.col-left { width: 42%; overflow-y: auto; padding-right: 8px; }
-.col-right { width: 58%; overflow-y: auto; padding: 0; }
+.app-container.layout-dual .col-left { width: 42%; overflow-y: auto; padding-right: 8px; }
+.app-container.layout-dual .col-right { width: 58%; overflow-y: auto; padding: 0; }
+.col-left, .col-right { width: 100%; overflow: visible; padding: 0; }
 
 /* Form Card */
 .form-card {
@@ -610,7 +633,7 @@ a:hover { text-decoration: underline; }
 .result-card .empty-state .empty-desc { font-size: 0.72rem; color: var(--text-muted); max-width: 280px; line-height: 1.6; }
 
 /* Results outside card */
-.results-outer { margin-top: 16px; animation: fadeIn 0.3s ease; }
+.results-outer { margin-top: 16px; }
 .app-container.layout-single .results-outer { display: none; }
 
 /* Config Block Cards (refined for dual layout) */

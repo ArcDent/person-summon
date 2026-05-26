@@ -31,9 +31,25 @@ export default function HomePage() {
     setLayout((prev) => {
       const next: LayoutMode = prev === "dual" ? "single" : "dual";
       localStorage.setItem("layout", next);
+      if (next === "dual") {
+        document.documentElement.classList.add("layout-dual");
+      } else {
+        document.documentElement.classList.remove("layout-dual");
+      }
       return next;
     });
   };
+
+  // Sync html class on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("layout") as LayoutMode;
+    if (saved === "single") {
+      setLayout("single");
+      document.documentElement.classList.remove("layout-dual");
+    } else {
+      document.documentElement.classList.add("layout-dual");
+    }
+  }, []);
 
   const handleRetry = useCallback(() => {
     setResult(null);
