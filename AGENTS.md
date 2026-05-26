@@ -6,6 +6,15 @@
 - **技术栈**: Next.js 15, TypeScript, React 19, better-sqlite3, vitest, OpenAI/Anthropic SDK, TOML
 
 ## 项目静态结构
+            └── generate/
+                └── route.ts                   # POST 生成人格配置（SSE 流式 + 非流式）
+            ├── history/
+            │   ├── route.ts                   # GET 历史记录列表（cursor 分页，默认 20 条/最多 50 条）
+            │   └── [id]/
+            │       └── route.ts               # GET 单条历史详情 + DELETE 删除
+            └── export/
+                └── toml/
+                    └── route.ts               # GET 按 historyId 导出 TOML 文件（Content-Disposition 下载）
 ```
 person-summon/
 ├── README.md                 # 项目主文档
@@ -27,6 +36,7 @@ person-summon/
     │   ├── prompt.ts         # 提示词模板（MaiMai 兼容默认模板）
     │   ├── normalizer.ts     # 解析结果规范化 + 配置块构建器（TOML 序列化）
     │   ├── toml.ts           # TOML 生成器（ParsedResult → bot_config.toml）
+    │   ├── rate-limit.ts     # 请求频率限制 stub（Task 14 完善）
     │   ├── llm/
     │   │   ├── index.ts      # LLM 分发器（callLLM: 解密 API key + 路由到 openai/anthropic）
     │   │   ├── openai.ts     # OpenAI SDK 适配器（callOpenAI: 流式/非流式）
@@ -36,11 +46,17 @@ person-summon/
     └── app/
         ├── layout.tsx                         # 根布局（中文 lang，metadata）
         ├── globals.css                        # 全局样式 + CSS 变量
-        └── api/
-            └── providers/
-                ├── route.ts                   # GET 列表（不含 apiKey）+ POST upsert（create/update）
-                └── [id]/
-                    └── route.ts               # DELETE 删除提供商
+        ├── api/
+            ├── providers/
+            │   ├── route.ts                   # GET 列表（不含 apiKey）+ POST upsert（create/update）
+            │   └── [id]/
+            │       └── route.ts               # DELETE 删除提供商
+            ├── prompt-template/
+                ├── route.ts                   # GET 查询模板 + PUT upsert 模板
+                └── reset/
+                    └── route.ts               # POST 重置模板（指定语言或全部）
+            └── generate/
+                └── route.ts                   # POST 生成人格配置（SSE 流式 + 非流式）
 ```
 
 ## 最近操作
@@ -54,12 +70,15 @@ person-summon/
 - 2026-05-26: Task 8 — TOML Generator：创建 `src/lib/toml.ts`，ParsedResult → bot_config.toml，含 `[personality]`/`[chat]`/`[[chat.chat_prompts]]` 三区段，escapeBasicString 处理 TOML 基本字符串转义，冒烟测试通过
 - 2026-05-26: Task 9 — LLM Adapters：创建 `src/lib/llm/`（openai.ts / anthropic.ts / index.ts），支持流式和非流式调用，callLLM 分发器解密 API key 并路由到对应 SDK 适配器，npx tsc --noEmit 编译通过
 - 2026-05-26: Task 10 — API Providers：创建 `src/app/api/providers/route.ts`（GET 列表不含 apiKey + POST upsert 含加密）和 `[id]/route.ts`（DELETE），curl 冒烟测试 GET 返回 4 个种子提供商
+- 2026-05-26: Task 11 — API Prompt Template：创建 `src/app/api/prompt-template/route.ts`（GET 查询/ PUT upsert）和 `reset/route.ts`（POST 重置），curl 测试 GET/PUT/reset 全部通过
+- 2026-05-26: Task 12 — API Generate：创建 `src/app/api/generate/route.ts`（POST 生成人格配置），支持 SSE 流式和非流式输出，集成 rate-limit stub（Task 14 完善），创建 `src/lib/rate-limit.ts` stub，npx tsc --noEmit 编译通过
+- 2026-05-26: Task 13 — API History + Export：创建 `src/app/api/history/route.ts`（GET cursor 分页）、`src/app/api/history/[id]/route.ts`（GET 详情 + DELETE 删除）、`src/app/api/export/toml/route.ts`（GET 按 historyId 导出 TOML 下载），npx tsc --noEmit 编译通过
 
 ## 进行中
 - 无
 
 ## 下一步
-- Task 11: API - Prompt Template — 提示词模板 API 路由
+- Task 14: Rate Limiting — 完善请求频率限制
 
 ## 关键发现
 - better-sqlite3 不会自动创建父目录，需手动 `fs.mkdirSync` 确保 `data/` 存在
@@ -67,3 +86,4 @@ person-summon/
 - seed 的 COUNT 检查应放在事务内部以避免 TOCTOU 竞态条件
 - WAL 模式 + foreign_keys ON 提升并发性能
 - parser 采用三层策略：去 markdown 包裹 -> JSON.parse -> 首尾 {} 回退提取，与 Python 版 `_extract_json_object` 行为一致
+- buildPromptInstruction 将 `{source_text}` 替换为 `REPLACE_ME`，调用方需替换 `REPLACE_ME` 而非 `{source_text}`，否则用户原文不会被注入到 prompt 中
