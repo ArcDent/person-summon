@@ -22,25 +22,14 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<string>("blocks");
   const lastFormData = useRef<GenerateRequest | null>(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("layout") as LayoutMode;
-    if (saved === "single") setLayout("single");
+  const applyLayout = useCallback((mode: LayoutMode) => {
+    if (mode === "dual") {
+      document.documentElement.classList.add("layout-dual");
+    } else {
+      document.documentElement.classList.remove("layout-dual");
+    }
   }, []);
 
-  const toggleLayout = () => {
-    setLayout((prev) => {
-      const next: LayoutMode = prev === "dual" ? "single" : "dual";
-      localStorage.setItem("layout", next);
-      if (next === "dual") {
-        document.documentElement.classList.add("layout-dual");
-      } else {
-        document.documentElement.classList.remove("layout-dual");
-      }
-      return next;
-    });
-  };
-
-  // Sync html class on mount
   useEffect(() => {
     const saved = localStorage.getItem("layout") as LayoutMode;
     if (saved === "single") {
@@ -50,6 +39,15 @@ export default function HomePage() {
       document.documentElement.classList.add("layout-dual");
     }
   }, []);
+
+  const toggleLayout = () => {
+    setLayout((prev) => {
+      const next: LayoutMode = prev === "dual" ? "single" : "dual";
+      localStorage.setItem("layout", next);
+      applyLayout(next);
+      return next;
+    });
+  };
 
   const handleRetry = useCallback(() => {
     setResult(null);
