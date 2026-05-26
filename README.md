@@ -33,9 +33,13 @@ npm test
 ```
 person-summon/
 ├── src/
-│   ├── lib/db.ts          # SQLite 数据库层（初始化、迁移、种子数据）
+│   ├── lib/
+│   │   ├── db.ts           # SQLite 数据库层（初始化、迁移、种子数据）
+│   │   ├── crypto.ts       # AES-256-GCM 加解密模块
+│   │   └── parser.ts       # JSON 解析器（markdown 剥离 + 花括号回退提取）
 │   ├── types/index.ts      # 共享 TypeScript 类型定义
 │   └── app/                # Next.js App Router（布局、页面）
+├── __tests__/              # Vitest 单元测试
 ├── data/                   # SQLite 数据库文件（运行时生成，不提交）
 ├── docs/                   # 原始项目参考文档
 ├── package.json
