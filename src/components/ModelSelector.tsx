@@ -81,6 +81,7 @@ export default function ModelSelector({ onChange }: ModelSelectorProps) {
           <option key={m.id} value={m.id}>{m.displayName}</option>
         ))}
       </select>
+      <button className="gear-btn" onClick={() => setManagerOpen(true)} title="管理模型">&#9881;</button>
       <ProviderManager isOpen={managerOpen} onClose={() => setManagerOpen(false)} />
     </div>
   );

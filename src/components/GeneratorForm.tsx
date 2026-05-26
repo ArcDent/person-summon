@@ -53,7 +53,6 @@ export default function GeneratorForm({ onGenerate, disabled }: GeneratorFormPro
             />
           </div>
           <div className="btn-row">
-            <button className="gear-btn" onClick={(e) => { e.preventDefault(); }} title={t.editProvider}>&#9881;</button>
             <button className="btn-generate" onClick={handleSubmit} disabled={!canSubmit}>
               {disabled ? <><span className="spinner" /> {t.generating}</> : <>&#9679; {t.generate}</>}
             </button>
