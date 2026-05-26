@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import fs from "fs";
 import path from "path";
 import { v4 as uuid } from "uuid";
 
@@ -8,9 +9,14 @@ let db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
   if (!db) {
+    const dir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     db = new Database(DB_PATH);
     db.pragma("journal_mode = WAL");
     db.pragma("foreign_keys = ON");
+    db.pragma("busy_timeout = 5000");
     initDb();
     seedIfEmpty();
   }
@@ -56,8 +62,6 @@ function initDb(): void {
 
 function seedIfEmpty(): void {
   const d = db!;
-  const count = d.prepare("SELECT COUNT(*) as c FROM providers").get() as { c: number };
-  if (count.c > 0) return;
 
   const insertProvider = d.prepare(
     "INSERT INTO providers (id, name, type, endpoint) VALUES (?, ?, ?, ?)"
@@ -67,6 +71,9 @@ function seedIfEmpty(): void {
   );
 
   const seed = d.transaction(() => {
+    const count = d.prepare("SELECT COUNT(*) as c FROM providers").get() as { c: number };
+    if (count.c > 0) return;
+
     // OpenAI
     const openaiId = uuid();
     insertProvider.run(openaiId, "OpenAI", "openai", "https://api.openai.com/v1");
