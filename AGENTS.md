@@ -14,6 +14,9 @@ person-summon/
 ├── next.config.ts
 ├── vitest.config.ts
 ├── .gitignore
+├── Dockerfile               # Docker 构建：node:22-alpine, better-sqlite3 编译依赖
+├── docker-compose.yml       # Docker 部署：端口 3000, data 卷挂载, ENCRYPTION_KEY
+├── start.sh                 # 一键启动脚本：环境检查 + 密钥生成 + npm install + build + start
 ├── __tests__/               # vitest 测试
 │   ├── parser.test.ts
 │   ├── normalizer.test.ts
@@ -65,19 +68,15 @@ person-summon/
             └── export/toml/  # TOML 导出下载 API
 
 ## 最近操作
-- 2026-05-26: Task 12 — API Generate + rate-limit stub，SSE 流式和非流式输出
-- 2026-05-26: Task 13 — API History + Export，cursor 分页 + TOML 下载
-- 2026-05-26: Task 15 — i18n 文件与 Translation Hook（zh/en/ja 三语）
-- 2026-05-26: Task 16+17 — 前端全部 8 个组件 + 主页面 + globals.css 暗色主题，npx tsc 通过，dev server 验证通过
-- 2026-05-26: 修复 next.config.ts CSP 策略：添加 img-src data: 和 connect-src 'self' 和 'unsafe-eval' 以支持内联 SVG 和 HMR
-- 2026-05-26: Task 18 — API 路由集成测试：providers (3 tests), generate (3 tests with vi.mock), history (1 test)，全部 7 个测试通过
+- 2026-05-26: 全部 20 个 Task 完成 — Next.js 15 全栈项目 scaffolding → types → DB → crypto → core logic (parser/prompt/normalizer/toml) → LLM adapters → API routes → rate limiting → i18n → 前端组件 (暗夜工作台主题) → 测试 (31 tests) → Docker + start.sh → Final Polish
+- 2026-05-26: 最终验证 — tsc 零错误，npm run build 成功，31 tests PASS，dev server 在 localhost:3000 运行
 
 ## 进行中
-- 无
+- 无（所有任务完成）
 
 ## 下一步
-- Task 19: Docker + start.sh
-- Task 20: Final Polish
+- 用户可启动 dev server (`npm run dev`) 或 Docker 部署 (`docker-compose up -d`)
+- 后续可扩展：用户认证、更多 LLM 提供商、历史搜索
 
 ## 关键发现
 - better-sqlite3 不会自动创建父目录，需手动 fs.mkdirSync 确保 data/ 存在
