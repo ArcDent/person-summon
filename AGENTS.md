@@ -26,6 +26,7 @@ person-summon/
     │   ├── parser.ts         # JSON 提取解析（markdown 剥离 + 回退）
     │   ├── prompt.ts         # 提示词模板（MaiMai 兼容默认模板）
     │   ├── normalizer.ts     # 解析结果规范化 + 配置块构建器（TOML 序列化）
+    │   ├── toml.ts           # TOML 生成器（ParsedResult → bot_config.toml）
     ├── types/
     │   └── index.ts          # 所有共享 TypeScript 类型定义
     └── app/
@@ -41,12 +42,13 @@ person-summon/
 - 2026-05-26: Task 5 — Parser (TDD)：创建 `src/lib/parser.ts`，从 LLM 响应中提取 JSON 对象，支持 markdown 代码块剥离和首尾花括号回退提取，9/9 测试通过
 - 2026-05-26: Task 6 — Prompt Template (TDD)：创建 `src/lib/prompt.ts`，MaiMai 兼容默认提示词模板（DEFAULT_PROMPT_ZH），支持 targetScene/language/extraRequirements 注入，6/6 测试通过
 - 2026-05-26: Task 7 — Normalizer (TDD)：创建 `src/lib/normalizer.ts`，解析结果规范化（trim/类型补全/长度限制）+ 配置块构建器（白名单 + TOML 序列化），9/9 测试通过
+- 2026-05-26: Task 8 — TOML Generator：创建 `src/lib/toml.ts`，ParsedResult → bot_config.toml，含 `[personality]`/`[chat]`/`[[chat.chat_prompts]]` 三区段，escapeBasicString 处理 TOML 基本字符串转义，冒烟测试通过
 
 ## 进行中
-- Task 7: Normalizer (TDD)（已完成）
+- Task 9: LLM Adapters（待开始）
 
 ## 下一步
-- Task 8: TOML Generator — 将 ConfigBlock[] 拼接为完整 TOML 文档，含表头注释
+- Task 9: LLM Adapters — OpenAI 和 Anthropic SDK 适配器，支持流式和非流式调用
 
 ## 关键发现
 - better-sqlite3 不会自动创建父目录，需手动 `fs.mkdirSync` 确保 `data/` 存在
