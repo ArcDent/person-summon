@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { I18nLayout } from "@/components/I18nLayout";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh">
-      <body>{children}</body>
+      <body>
+        <I18nLayout>{children}</I18nLayout>
+      </body>
     </html>
   );
 }

@@ -14,8 +14,14 @@ export function loadTranslations(locale: Locale): TranslationMap {
   }
 }
 
-export const I18nContext = createContext<{ t: TranslationMap; locale: Locale; setLocale: (l: Locale) => void }>({
+import type { Theme } from "@/components/I18nLayout";
+
+export const I18nContext = createContext<{
+  t: TranslationMap; locale: Locale; setLocale: (l: Locale) => void;
+  theme: Theme; toggleTheme: () => void;
+}>({
   t: zh, locale: "zh", setLocale: () => {},
+  theme: "light", toggleTheme: () => {},
 });
 
 export function useI18n() { return useContext(I18nContext); }
