@@ -586,11 +586,3 @@ body.layout-single .results-outer { display: none; }
 
 @keyframes resultSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ====== Header Alignment Fixes ====== */
-.app-header h1 { line-height: 1; height: 32px; display: flex; align-items: center; }
-body.layout-dual .app-header h1 { font-size: 1.25rem; }
-.lang-btn { height: 32px; display: inline-flex; align-items: center; padding: 0 12px; font-size: 0.8rem; line-height: 1; }
-.lang-switcher { align-items: center; }
-.history-btn { height: 32px; display: inline-flex; align-items: center; padding: 0 12px; font-size: 0.8rem; line-height: 1; }
-.layout-toggle-btn { width: 32px; height: 32px; font-size: 0.95rem; line-height: 1; }
-.theme-toggle-btn { width: 32px; height: 32px; font-size: 0.95rem; line-height: 1; }
