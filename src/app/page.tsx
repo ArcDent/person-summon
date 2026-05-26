@@ -178,7 +178,9 @@ export default function HomePage() {
 
           <GeneratorForm onGenerate={handleGenerate} disabled={loading} />
 
-          <PromptEditor />
+          <div className="form-card">
+            <PromptEditor />
+          </div>
         </div>
 
         {/* Right Column: Results */}
