@@ -33,6 +33,10 @@ npm test
 ```
 person-summon/
 ├── src/
+│   ├── i18n/
+│   │   ├── zh.json            # 中文翻译
+│   │   ├── en.json            # 英文翻译
+│   │   └── ja.json            # 日文翻译
 │   ├── lib/
 │   │   ├── db.ts              # SQLite 数据库层（初始化、迁移、种子数据）
 │   │   ├── crypto.ts          # AES-256-GCM 加解密模块
@@ -40,12 +44,17 @@ person-summon/
 │   │   ├── prompt.ts          # 提示词模板（MaiMai 兼容默认模板）
 │   │   ├── normalizer.ts      # 解析结果规范化 + 配置块构建器
 │   │   ├── toml.ts            # TOML 生成器（ParsedResult → bot_config.toml）
+│   │   ├── i18n.ts            # i18n 上下文与翻译加载钩子
 │   │   └── llm/               # LLM 适配器（openai / anthropic / 分发器）
 │   ├── types/index.ts         # 共享 TypeScript 类型定义
 │   └── app/
 │       ├── layout.tsx         # 根布局
 │       └── api/providers/     # 提供商 CRUD API（GET/POST/DELETE）
 ├── __tests__/                 # Vitest 单元测试
+│   ├── api/                   # API 路由集成测试（providers / generate / history）
+│   ├── parser.test.ts
+│   ├── normalizer.test.ts
+│   └── prompt.test.ts
 ├── data/                      # SQLite 数据库文件（运行时生成，不提交）
 ├── docs/                      # 原始项目参考文档
 ├── package.json
