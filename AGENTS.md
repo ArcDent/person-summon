@@ -68,20 +68,21 @@ person-summon/
             └── export/toml/  # TOML 导出下载 API
 
 ## 最近操作
-- 2026-05-26: 全部 20 个 Task 完成 — Next.js 15 全栈项目 scaffolding → types → DB → crypto → core logic (parser/prompt/normalizer/toml) → LLM adapters → API routes → rate limiting → i18n → 前端组件 (暗夜工作台主题) → 测试 (31 tests) → Docker + start.sh → Final Polish
-- 2026-05-26: GitHub 仓库创建并推送 — https://github.com/ArcDent/person-summon，含完整 README (免责声明 + API 文档 + 部署说明)
+- 2026-05-26: 全部 20 个 Task 完成并推送 GitHub — https://github.com/ArcDent/person-summon
+- 2026-05-26: 前端主题切换 — `:root` 默认亮色（极简纯白），`[data-theme="dark"]` 暗色（暗夜工作台），全局 CSS transition 动效，localStorage 持久化，☀/☾ 切换按钮在顶栏
+- 2026-05-26: 修复 ENCRYPTION_KEY 未设置导致 API Key 保存失败，创建 `.env.local` 自动生成密钥
+- 2026-05-26: 修复 stale `.next` 构建缓存导致 `Cannot find module './331.js'` 错误
+- 2026-05-26: 配置 `outputFileTracingRoot` 消除 lockfile 工作区冲突告警
 
 ## 进行中
-- 无（所有任务完成）
+- 无
 
 ## 下一步
 - 后续可扩展：用户认证、更多 LLM 提供商、历史搜索
 
 ## 关键发现
-- better-sqlite3 不会自动创建父目录，需手动 fs.mkdirSync 确保 data/ 存在
-- busy_timeout=5000 可防止并发写入时的 SQLITE_BUSY 错误
-- WAL 模式 + foreign_keys ON 提升并发性能
-- parser 采用三层策略：去 markdown 包裹 -> JSON.parse -> 首尾 {} 回退提取
-- 前端 SSE 流式读取：fetch POST + ReadableStream reader + TextDecoder + buffer 按行解析
-- CSP 需要 img-src data: 允许 CSS 内联 SVG（噪声纹理、下拉箭头）
-- 暗色主题设计：bg #0a0a0f, card #16161e, amber #f0a040 (人格区段), cyan #3dd6c8 (对话区段)
+- ENCRYPTION_KEY 必须通过 `.env.local` 或环境变量设置，否则 crypto 模块抛异常导致 API 返回空 body
+- `rm -rf .next` 是修复 Next.js Webpack chunk 缓存损坏的标准手段
+- `/home/arcdent/package-lock.json` 干扰 Next.js 工作区检测，需 `outputFileTracingRoot` 配置
+- 暗色/亮色主题切换用 CSS 变量 + `data-theme` 属性 + `* { transition }` 最轻量
+- 亮色默认 (`:root`) > 暗色默认，符合大多数用户预期
