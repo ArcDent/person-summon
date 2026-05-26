@@ -29,7 +29,7 @@ describe("CONFIG_BLOCK_WHITELIST", () => {
 
 describe("normalizeResult", () => {
   it("passes through valid data unchanged", () => {
-    const result = normalizeResult(sampleParsed);
+    const result = normalizeResult(sampleParsed as unknown as Record<string, unknown>);
     expect(result).toEqual(sampleParsed);
   });
 
