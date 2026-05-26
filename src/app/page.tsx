@@ -24,9 +24,11 @@ export default function HomePage() {
 
   const applyLayout = useCallback((mode: LayoutMode) => {
     if (mode === "dual") {
-      document.documentElement.classList.add("layout-dual");
+      document.body.classList.add("layout-dual");
+      document.body.classList.remove("layout-single");
     } else {
-      document.documentElement.classList.remove("layout-dual");
+      document.body.classList.add("layout-single");
+      document.body.classList.remove("layout-dual");
     }
   }, []);
 
@@ -34,9 +36,9 @@ export default function HomePage() {
     const saved = localStorage.getItem("layout") as LayoutMode;
     if (saved === "single") {
       setLayout("single");
-      document.documentElement.classList.remove("layout-dual");
+      document.body.classList.add("layout-single");
     } else {
-      document.documentElement.classList.add("layout-dual");
+      document.body.classList.add("layout-dual");
     }
   }, []);
 
@@ -155,7 +157,7 @@ export default function HomePage() {
   const hasContent = !!(result || error || loading);
 
   return (
-    <div className={`app-container ${layout === "dual" ? "layout-dual" : "layout-single"}`}>
+    <div className="app-container">
       {/* Header */}
       <header className="app-header">
         <h1>MAIBOT人格生成器</h1>
