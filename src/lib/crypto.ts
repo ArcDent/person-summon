@@ -7,8 +7,7 @@ const TAG_LENGTH = 16;
 function getKey(): Buffer {
   const key = process.env.ENCRYPTION_KEY;
   if (!key) {
-    console.error("ENCRYPTION_KEY environment variable is required");
-    process.exit(1);
+    throw new Error("ENCRYPTION_KEY environment variable is required");
   }
   // Derive 32-byte key using SHA-256
   return crypto.createHash("sha256").update(key).digest();
@@ -33,5 +32,5 @@ export function decrypt(ciphertext: string): string {
   const encrypted = buf.subarray(IV_LENGTH, buf.length - TAG_LENGTH);
   const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
   decipher.setAuthTag(tag);
-  return decipher.update(encrypted) + decipher.final("utf8");
+  return decipher.update(encrypted, undefined, "utf8") + decipher.final("utf8");
 }
