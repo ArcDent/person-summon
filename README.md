@@ -45,10 +45,44 @@ npm run dev
 
 访问 `http://localhost:3000`。
 
-### Docker 部署
+> **Windows 用户**：如果 `openssl` 不可用，可用 Node.js 生成密钥：
+> ```powershell
+> node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+> ```
+
+### Docker 一键部署
+
+前置条件：安装 [Docker](https://docs.docker.com/get-docker/) 和 Docker Compose。
+
+**Linux / macOS：**
 
 ```bash
+# 克隆并进入项目
+git clone https://github.com/ArcDent/person-summon.git
+cd person-summon
+
+# 一键启动（自动生成加密密钥）
 ENCRYPTION_KEY=$(openssl rand -hex 32) docker compose up -d
+```
+
+**Windows（PowerShell）：**
+
+```powershell
+# 克隆并进入项目
+git clone https://github.com/ArcDent/person-summon.git
+cd person-summon
+
+# 生成随机密钥并启动
+$ENV:ENCRYPTION_KEY = node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+docker compose up -d
+```
+
+访问 `http://localhost:3000`。
+
+**停止服务：**
+
+```bash
+docker compose down
 ```
 
 ### start.sh 一键启动
