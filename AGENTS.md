@@ -69,13 +69,12 @@ person-summon/
 
 ## 最近操作
 - 2026-05-26: 全部 20 个 Task 完成 — Next.js 15 全栈项目 scaffolding → types → DB → crypto → core logic (parser/prompt/normalizer/toml) → LLM adapters → API routes → rate limiting → i18n → 前端组件 (暗夜工作台主题) → 测试 (31 tests) → Docker + start.sh → Final Polish
-- 2026-05-26: 最终验证 — tsc 零错误，npm run build 成功，31 tests PASS，dev server 在 localhost:3000 运行
+- 2026-05-26: GitHub 仓库创建并推送 — https://github.com/ArcDent/person-summon，含完整 README (免责声明 + API 文档 + 部署说明)
 
 ## 进行中
 - 无（所有任务完成）
 
 ## 下一步
-- 用户可启动 dev server (`npm run dev`) 或 Docker 部署 (`docker-compose up -d`)
 - 后续可扩展：用户认证、更多 LLM 提供商、历史搜索
 
 ## 关键发现
