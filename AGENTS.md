@@ -37,6 +37,7 @@ person-summon/
 - 2026-05-26: 双栏布局重构 — 从 CSS `html:has()` 改为 `body.className`，从 `overflow: visible` 改为 `overflow-y: auto`，彻底修复滚动
 - 2026-05-26: ENCRYPTION_KEY .env.local + outputFileTracingRoot 配置
 - 2026-05-26: 修复模型设置齿轮按钮无响应 — ModelSelector 齿轮按钮被误删，恢复后 GeneratorForm 中假按钮移除
+- 2026-05-26: README 新增跨平台 Docker 部署说明（Linux/macOS/Windows）
 
 ## 进行中
 - 无
