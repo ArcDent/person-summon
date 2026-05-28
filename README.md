@@ -103,7 +103,7 @@ chmod +x start.sh
 - 系统提示词模板可编辑 + 一键恢复麦麦原始默认
 - 历史记录游标分页，支持回溯和导出
 - 双栏/单栏布局一键切换
-- 中 / 英 / 日三语 UI（En/Ja 提示词模板为机器翻译，建议人工验证）
+- 中 / 英双语 UI（英语提示词模板为机器翻译，建议人工验证）
 - 亮色 / 暗色主题切换
 - SQLite 本地数据库，零外部依赖
 
@@ -145,7 +145,7 @@ npm test
 │   ├── components/      # React UI 组件
 │   ├── lib/             # 核心逻辑 (db, crypto, parser, prompt, normalizer, toml, llm)
 │   ├── types/           # TypeScript 类型定义
-│   └── i18n/            # 中/英/日翻译
+│   └── i18n/            # 中/英翻译
 ├── __tests__/           # 单元测试 + 集成测试
 ├── docs/                # 设计规范 + 实现计划
 ├── data/                # SQLite 数据库 (运行时生成)

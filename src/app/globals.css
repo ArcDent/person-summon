@@ -24,7 +24,6 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-heading: "Space Grotesk", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --noise-opacity: 0;
 }
 
 /* ====== Dark Theme ====== */
@@ -48,25 +47,19 @@
   --green: #5ec97c;
   --input-bg: rgba(0, 0, 0, 0.3);
   --card-shadow: none;
-  --noise-opacity: 0.03;
 }
 
 /* ====== Theme Transition ====== */
-*, *::before, *::after {
-  transition: background-color 0.3s ease, color 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+[data-theme] body {
+  transition: background-color 0.3s ease, color 0.2s ease;
 }
 
-/* Exclude transitions on animations and spinners */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-@keyframes tooltipPop { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 0 0 var(--amber-glow); } 50% { box-shadow: 0 0 8px 0 var(--amber-glow); } }
-@keyframes themeIconFlip { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* ====== Reset ====== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
@@ -76,15 +69,6 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
-}
-
-/* Subtle noise texture (dark mode only via opacity) */
-body::before {
-  content: "";
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-repeat: repeat; background-size: 256px 256px;
-  opacity: var(--noise-opacity);
 }
 
 button { cursor: pointer; font-family: var(--font-sans); border: none; background: none; color: inherit; }
@@ -102,8 +86,6 @@ a:hover { text-decoration: underline; }
   transition: all 0.2s ease;
 }
 .theme-toggle-btn:hover { border-color: var(--border-hover); color: var(--text); }
-.theme-toggle-btn.flip { animation: themeIconFlip 0.5s ease; }
-
 /* ====== Layout ====== */
 .app-container { max-width: 780px; margin: 0 auto; padding: 40px 20px 80px; }
 
@@ -118,15 +100,6 @@ a:hover { text-decoration: underline; }
   font-weight: 700; letter-spacing: -0.02em; color: var(--text);
 }
 .header-actions { display: flex; align-items: center; gap: 8px; }
-
-/* ====== Cards ====== */
-.card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
-  box-shadow: var(--card-shadow);
-  transition: border-color 0.2s ease, background-color 0.3s ease;
-}
-.card:hover { border-color: var(--border-hover); }
 
 /* ====== Config Block Cards ====== */
 .config-block-card {
@@ -333,16 +306,6 @@ a:hover { text-decoration: underline; }
 .badge-amber { background: var(--amber-dim); color: var(--amber); }
 .badge-cyan { background: var(--cyan-dim); color: var(--cyan); }
 
-/* ====== Model Selector Row ====== */
-.model-selector-row { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
-.model-selector-row .model-select-group { flex: 1; min-width: 180px; }
-.model-selector-row .gear-btn {
-  padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text-muted); font-size: 1rem; transition: all 0.15s ease;
-  align-self: flex-end; background: var(--input-bg);
-}
-.model-selector-row .gear-btn:hover { border-color: var(--border-hover); color: var(--text); }
-
 /* ====== Temperature Slider ====== */
 .temp-slider-group { display: flex; align-items: center; gap: 10px; }
 .temp-slider-group input[type="range"] {
@@ -381,15 +344,6 @@ a:hover { text-decoration: underline; }
 .error-card .error-title { font-weight: 700; color: var(--red); margin-bottom: 6px; }
 .error-card .error-code { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px; }
 .error-card .error-message { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px; }
-
-/* ====== Result Bottom Bar ====== */
-.result-bottom-bar {
-  position: sticky; bottom: 20px; display: flex; gap: 10px;
-  padding: 14px 20px; background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--radius); margin-top: 10px;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.06); flex-wrap: wrap;
-}
-[data-theme="dark"] .result-bottom-bar { background: var(--card); box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3); }
 
 /* ====== Prompt Editor ====== */
 .prompt-editor { margin-bottom: 16px; }
@@ -437,14 +391,6 @@ a:hover { text-decoration: underline; }
 [data-theme="dark"] .confirm-box { background: var(--card); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); }
 .confirm-box p { margin-bottom: 18px; color: var(--text-secondary); font-size: 0.92rem; }
 .confirm-actions { display: flex; gap: 10px; justify-content: center; }
-
-/* ====== Tooltip ====== */
-.copy-tooltip {
-  position: fixed; z-index: 500; pointer-events: none;
-  background: var(--green); color: #ffffff;
-  padding: 4px 10px; border-radius: var(--radius-sm);
-  font-size: 0.75rem; font-weight: 600; animation: tooltipPop 0.2s ease;
-}
 
 /* ====== Streaming Output ====== */
 .streaming-output {

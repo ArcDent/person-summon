@@ -39,7 +39,7 @@
   "modelId": "Model ID",
   "modelDisplayName": "Model Display Name",
   "noResults": "No generation history",
-  "noteEnJa": "English and Japanese prompt templates are machine-translated. Manual verification recommended.",
+  "noteEnJa": "English prompt template is machine-translated. Manual verification recommended.",
   "deleteConfirm": "Confirm deletion?",
   "configNote": "The following config blocks can be copied directly into your maimaibot bot_config.toml.",
   "sectionInput": "Generate Input",

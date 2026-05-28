@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getDefaultPrompt, buildPromptInstruction, DEFAULT_PROMPT_ZH } from "@/lib/prompt";
+import { buildPromptInstruction, DEFAULT_PROMPT_ZH } from "@/lib/prompt";
 
 describe("DEFAULT_PROMPT_ZH", () => {
   it("includes key MaiMai-compatible sections", () => {

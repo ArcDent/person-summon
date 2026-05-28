@@ -23,7 +23,7 @@ mai-p-summon/
 ├── docs/superpowers/       # 设计规范 + 实现计划
 ├── data/                   # SQLite 数据库文件
 └── src/
-    ├── i18n/               # zh/en/ja 翻译
+    ├── i18n/               # zh/en 翻译
     ├── lib/                # 核心逻辑 (db, crypto, parser, prompt, normalizer, toml, rate-limit, i18n, llm/)
     ├── types/index.ts
     ├── components/         # React UI 组件
@@ -36,11 +36,11 @@ mai-p-summon/
 - **切换**: 顶栏 ⊟/⊞ 按钮，`localStorage.layout` 持久化
 
 ## 最近操作
-- 2026-05-28: 仓库更名为 MaiPSummon，全局替换名称引用（package.json / i18n / 页面标题 / start.sh / compose）
-- 2026-05-28: 新增 GitHub Actions CI/CD（`.github/workflows/docker-build.yml`），push main 自动构建推送到 GHCR
+- 2026-05-28: 代码瘦身 — 删除日语本地化（ja.json）、dead code（getDefaultPrompt）、unused CSS（~58行装饰性/冗余样式）、伪扩展点（日文提示词模板映射）
+- 2026-05-28: 仓库更名为 MaiPSummon，全局替换名称引用
+- 2026-05-28: 新增 GitHub Actions CI/CD（`.github/workflows/docker-build.yml`），push master 自动构建推送到 GHCR
 - 2026-05-28: 新增 `docker-compose.ghcr.yml` 远端拉取部署方案，README 重写以强调 GHCR 一键拉取流程
 - 2026-05-28: Dockerfile 优化为三阶段构建（deps → build → runtime），next.config.ts 添加 `output: standalone`
-- 2026-05-26: 全部 20 个 Task 完成，双栏布局重构
 
 ## 进行中
 - 等待用户在 GitHub 上 rename 仓库（Settings → Rename → MaiPSummon），rename 后 CI/CD 自动生效

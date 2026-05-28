@@ -47,16 +47,6 @@ private_chat_prompts = "你正在聊天..."
 用户原文：
 {source_text}`;
 
-export function getDefaultPrompt(language: string): string {
-  if (language === "English") {
-    return DEFAULT_PROMPT_ZH;
-  }
-  if (language === "日本語") {
-    return DEFAULT_PROMPT_ZH;
-  }
-  return DEFAULT_PROMPT_ZH;
-}
-
 function sceneLabel(scene: string): string {
   switch (scene) {
     case "group": return "群聊";

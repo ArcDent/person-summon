@@ -163,13 +163,13 @@ export default function HomePage() {
         <h1>MaiPSummon</h1>
         <div className="header-actions">
           <div className="lang-switcher">
-            {(["zh", "en", "ja"] as const).map((lang) => (
+            {(["zh", "en"] as const).map((lang) => (
               <button
                 key={lang}
                 className={`lang-btn ${locale === lang ? "active" : ""}`}
                 onClick={() => setLocale(lang)}
               >
-                {lang === "zh" ? "中" : lang === "en" ? "EN" : "日"}
+                {lang === "zh" ? "中" : "EN"}
               </button>
             ))}
           </div>

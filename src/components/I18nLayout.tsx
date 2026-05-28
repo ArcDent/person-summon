@@ -10,7 +10,7 @@ export function I18nLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const savedLocale = localStorage.getItem("locale") as Locale;
-    if (savedLocale && ["zh", "en", "ja"].includes(savedLocale)) {
+    if (savedLocale && ["zh", "en"].includes(savedLocale)) {
       setLocale(savedLocale);
     }
     const savedTheme = localStorage.getItem("theme") as Theme;

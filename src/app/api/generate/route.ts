@@ -59,7 +59,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   };
 
   // Load prompt template
-  const lang = body.language?.startsWith("en") ? "en" : body.language?.startsWith("ja") ? "ja" : "zh";
+  const lang = body.language?.startsWith("en") ? "en" : "zh";
   const templateRow = db.prepare("SELECT template FROM prompt_template WHERE language = ?").get(lang) as { template: string } | undefined;
 
   const systemPrompt = buildPromptInstruction(

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { DEFAULT_PROMPT_ZH } from "@/lib/prompt";
 
-const DEFAULTS: Record<string, string> = { zh: DEFAULT_PROMPT_ZH, en: DEFAULT_PROMPT_ZH, ja: DEFAULT_PROMPT_ZH };
+const DEFAULTS: Record<string, string> = { zh: DEFAULT_PROMPT_ZH, en: DEFAULT_PROMPT_ZH };
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);

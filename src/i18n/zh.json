@@ -39,7 +39,7 @@
   "modelId": "模型 ID",
   "modelDisplayName": "模型显示名",
   "noResults": "暂无生成记录",
-  "noteEnJa": "English 和 日本語 的提示词模板为机器翻译，建议人工验证后再使用。",
+  "noteEnJa": "English 提示词模板为机器翻译，建议人工验证后再使用。",
   "deleteConfirm": "确认删除？",
   "configNote": "以下配置块可直接复制到 maimaibot 的 bot_config.toml 中使用。",
   "sectionInput": "生成输入",

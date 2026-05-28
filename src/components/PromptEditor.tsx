@@ -6,7 +6,7 @@ import type { PromptTemplate, ApiResponse } from "@/types";
 export default function PromptEditor() {
   const { t, locale } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState<"zh" | "en" | "ja">("zh");
+  const [activeLang, setActiveLang] = useState<"zh" | "en">("zh");
   const [template, setTemplate] = useState("");
   const [originalTemplate, setOriginalTemplate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,12 +32,12 @@ export default function PromptEditor() {
 
   useEffect(() => {
     if (isOpen) {
-      setActiveLang(locale === "en" ? "en" : locale === "ja" ? "ja" : "zh");
-      fetchTemplate(locale === "en" ? "en" : locale === "ja" ? "ja" : "zh");
+      setActiveLang(locale === "en" ? "en" : "zh");
+      fetchTemplate(locale === "en" ? "en" : "zh");
     }
   }, [isOpen, locale, fetchTemplate]);
 
-  const handleLangChange = (lang: "zh" | "en" | "ja") => {
+  const handleLangChange = (lang: "zh" | "en") => {
     setActiveLang(lang);
     fetchTemplate(lang);
     setMessage("");
@@ -100,18 +100,18 @@ export default function PromptEditor() {
       {isOpen && (
         <div className="prompt-editor-body">
           <div className="lang-pills">
-            {(["zh", "en", "ja"] as const).map((lang) => (
+            {(["zh", "en"] as const).map((lang) => (
               <button
                 key={lang}
                 className={`lang-pill ${activeLang === lang ? "active" : ""}`}
                 onClick={(e) => { e.stopPropagation(); handleLangChange(lang); }}
               >
-                {lang === "zh" ? "简体中文" : lang === "en" ? "English" : "日本語"}
+                {lang === "zh" ? "简体中文" : "English"}
               </button>
             ))}
           </div>
 
-          {(activeLang === "en" || activeLang === "ja") && (
+          {activeLang === "en" && (
             <div className="warning-box">{t.noteEnJa}</div>
           )}
 
