@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "=== person-summon 启动脚本 ==="
+echo "=== MaiPSummon 启动脚本 ==="
 
 # 1. Check Node.js
 if ! command -v node &> /dev/null; then
@@ -62,6 +62,6 @@ npm run build
 
 # 9. Start
 echo ""
-echo "  人格生成器已启动: http://localhost:3000"
+echo "  MaiPSummon 已启动: http://localhost:3000"
 echo ""
 npm start

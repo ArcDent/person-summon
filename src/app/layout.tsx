@@ -3,7 +3,7 @@ import { I18nLayout } from "@/components/I18nLayout";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MAIBOT人格生成器 | Persona Generator",
+  title: "MaiPSummon | MAIBOT人格生成器",
   description: "Generate bot personality configs for maimaibot",
 };
 

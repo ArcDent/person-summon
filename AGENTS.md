@@ -1,29 +1,33 @@
-# AGENTS.md — person-summon
+# AGENTS.md — MaiPSummon
 
 ## 项目身份
 - **类型**: Next.js 15 全栈 Web 应用
 - **目标**: 为 maimaibot 生成 bot 人格配置（Persona Generator）
 - **技术栈**: Next.js 15, TypeScript, React 19, better-sqlite3, vitest, OpenAI/Anthropic SDK
-- **仓库**: https://github.com/ArcDent/person-summon
+- **仓库**: https://github.com/ArcDent/MaiPSummon
 
 ## 项目静态结构
 ```
-person-summon/
+mai-p-summon/
 ├── README.md
 ├── AGENTS.md
 ├── package.json / tsconfig.json / next.config.ts / vitest.config.ts
 ├── .gitignore
-├── Dockerfile / docker-compose.yml / start.sh
-├── public/prototype.html    # 双栏布局原型
-├── __tests__/               # vitest 测试 (6 files, 31 tests)
-├── docs/superpowers/        # 设计规范 + 实现计划
-├── data/                    # SQLite 数据库文件
+├── Dockerfile              # 三阶段构建（deps → build → runtime）
+├── docker-compose.yml      # 本地源码构建
+├── docker-compose.ghcr.yml # GHCR 远端镜像拉取
+├── start.sh
+├── .github/workflows/      # CI/CD 自动构建推送 GHCR
+├── public/prototype.html   # 双栏布局原型
+├── __tests__/              # vitest 测试 (6 files, 31 tests)
+├── docs/superpowers/       # 设计规范 + 实现计划
+├── data/                   # SQLite 数据库文件
 └── src/
-    ├── i18n/                # zh/en/ja 翻译
-    ├── lib/                 # 核心逻辑 (db, crypto, parser, prompt, normalizer, toml, rate-limit, i18n, llm/)
+    ├── i18n/               # zh/en/ja 翻译
+    ├── lib/                # 核心逻辑 (db, crypto, parser, prompt, normalizer, toml, rate-limit, i18n, llm/)
     ├── types/index.ts
-    ├── components/          # React UI 组件
-    └── app/                 # Next.js App Router (layout, page, globals.css, api/)
+    ├── components/         # React UI 组件
+    └── app/                # Next.js App Router (layout, page, globals.css, api/)
 ```
 
 ## 布局架构
@@ -32,15 +36,17 @@ person-summon/
 - **切换**: 顶栏 ⊟/⊞ 按钮，`localStorage.layout` 持久化
 
 ## 最近操作
-- 2026-05-26: 全部 20 个 Task 完成
-- 2026-05-26: 亮/暗主题切换 + 双栏/单栏布局切换
-- 2026-05-26: 双栏布局重构 — 从 CSS `html:has()` 改为 `body.className`，从 `overflow: visible` 改为 `overflow-y: auto`，彻底修复滚动
-- 2026-05-26: ENCRYPTION_KEY .env.local + outputFileTracingRoot 配置
-- 2026-05-26: 修复模型设置齿轮按钮无响应 — ModelSelector 齿轮按钮被误删，恢复后 GeneratorForm 中假按钮移除
-- 2026-05-26: README 新增跨平台 Docker 部署说明（Linux/macOS/Windows）
+- 2026-05-28: 仓库更名为 MaiPSummon，全局替换名称引用（package.json / i18n / 页面标题 / start.sh / compose）
+- 2026-05-28: 新增 GitHub Actions CI/CD（`.github/workflows/docker-build.yml`），push main 自动构建推送到 GHCR
+- 2026-05-28: 新增 `docker-compose.ghcr.yml` 远端拉取部署方案，README 重写以强调 GHCR 一键拉取流程
+- 2026-05-28: Dockerfile 优化为三阶段构建（deps → build → runtime），next.config.ts 添加 `output: standalone`
+- 2026-05-26: 全部 20 个 Task 完成，双栏布局重构
 
 ## 进行中
-- 无
+- 等待用户在 GitHub 上 rename 仓库（Settings → Rename → MaiPSummon），rename 后 CI/CD 自动生效
+
+## 下一步
+- GitHub 仓库 rename 后首次 push 验证 CI/CD 镜像构建推送是否正常
 
 ## 下一步
 - 用户认证、更多 LLM 提供商、历史搜索

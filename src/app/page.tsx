@@ -160,7 +160,7 @@ export default function HomePage() {
     <div className="app-container">
       {/* Header */}
       <header className="app-header">
-        <h1>MAIBOT人格生成器</h1>
+        <h1>MaiPSummon</h1>
         <div className="header-actions">
           <div className="lang-switcher">
             {(["zh", "en", "ja"] as const).map((lang) => (
